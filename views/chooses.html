@@ -1,0 +1,31 @@
+<div class="panel panel-default">
+	<div class="panel-body">
+		<div>
+			<h4>Hotels</h4>
+			<select>
+			{% for hotel in all_hotels %}
+				<option value="{{ hotel.id }}">{{ hotel.name }}</option>
+			{% endfor %}
+			</select>
+			<button data-type="hotels" class="btn-primary btn btn-xs btn-circle pull-right add-activity">+</button>
+		</div>
+		<div>
+			<h4>Restaurants</h4>
+			<select>
+			{% for restaurant in all_restaurants %}
+				<option value="{{ restaurant.id }}">{{ restaurant.name }}</option>
+			{% endfor %}
+			</select>
+			<button data-type="restaurants" class="btn-primary btn btn-xs btn-circle pull-right add-activity">+</button>
+		</div>
+		<div>
+			<h4>Things To Do</h4>
+			<select>
+			{% for thingToDo in all_things_to_do %}
+				<option value="{{ thingToDo.id }}">{{ thingToDo.name }}</option>
+			{% endfor %}
+			</select>
+			<button data-type="thingsToDo" class="btn-primary btn btn-xs btn-circle pull-right add-activity">+</button>
+		</div>
+	</div>
+</div>

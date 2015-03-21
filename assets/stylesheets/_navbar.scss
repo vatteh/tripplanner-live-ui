@@ -1,0 +1,32 @@
+.navbar-inverse {
+	background: $medium-brown;
+	border-color: darken($medium-brown, 10%);
+}
+
+.navbar-inverse .navbar-nav > li > a, .navbar-inverse .navbar-brand {
+	color: $light-blue;
+}
+
+.navbar-inverse .navbar-brand {
+	padding: 12px 15px;
+	white-space: nowrap;
+	.glyphicon {
+		font-size: 1.2em;
+		margin-right: 5px;
+	}
+	> span {
+		display: inline-block;
+		vertical-align: middle;
+	}
+}
+
+.navbar-inverse .navbar-nav > .active > a {
+	box-shadow: inset 0 0 10px darken($medium-brown, 15%);
+	background: darken($medium-brown, 5%);
+	color: lighten($light-blue, 10%);
+	&:hover {
+		background: darken($medium-brown, 10%);
+		box-shadow: inset 0 0 10px darken($medium-brown, 20%);
+		color: #fff;
+	}
+}

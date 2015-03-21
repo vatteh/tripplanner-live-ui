@@ -1,0 +1,78 @@
+#control-panel {
+
+	> div {
+		margin: 20px 0;
+	}
+
+	select {
+		width: calc(100% - 30px);
+		-webkit-appearance: menulist-button;
+	}
+
+	h4 {
+		color: #aaa;
+		margin-top: 0;
+	}
+
+	h3 {
+		color: darken($medium-brown, 5%);
+		text-align: center;
+		margin-top: 0;
+	}
+
+	.itinerary-item {
+		margin: 8px 0;
+		> * {
+			display: inline-block;
+			vertical-align: middle;
+		}
+		> .title {
+			width: calc(100% - 30px);
+		}
+		> .remove {
+			width: 30px;
+		}
+	}
+
+	.day-btn {
+		border-width: 2px;
+		width: 30px;
+		height: 30px;
+		padding: 5px 5px;
+		background: transparent;
+		border-color: $light-blue;
+		color: $light-blue;
+		&:hover {
+			border-color: #fff;
+			color: #fff;
+		}
+		&.current-day {
+			background: $light-blue;
+			color: $medium-brown;
+			&:hover {
+				background: #fff;
+			}
+		}
+	}
+
+}
+
+@media (max-width: $screen-sm) {
+	#control-panel > div {
+		padding: 0;
+	}
+}
+
+#day-title {
+	display: inline-block;
+	padding: 5px;
+	border: 1px solid $medium-brown;
+	border-radius: 5px;
+	> * {
+		display: inline-block;
+		vertical-align: middle;
+	}
+	> .remove {
+		margin-left: 1em;
+	}
+}

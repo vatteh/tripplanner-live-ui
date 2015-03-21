@@ -1,0 +1,20 @@
+#map-canvas {
+	height: calc(100vh - #{$top-space});
+	border-right: 2px solid lighten($medium-brown, 25%);
+	border-bottom: 2px solid lighten($medium-brown, 25%);
+	border-left: 2px solid lighten($medium-brown, 25%);
+}
+
+@media (min-width: $screen-md) {
+	#map-canvas {
+		border-bottom: none;
+		border-left: none;
+	}
+	.map-container {
+		padding: 0;
+		> div {
+			position: fixed;
+			width: inherit;
+		}
+	}
+}
