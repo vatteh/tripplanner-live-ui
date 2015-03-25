@@ -1,16 +1,30 @@
 var days = [];
 var currentDay;
 
-
-
-
 var $addDay = $('#add-day')
 var $dayTitle = $('#day-title span:first')
+var $removeDay = $('#day-title button:first')
+
+$.get('/days', function (data) {
+  var firstDayBtn;
+  //for all days in data
+  data.forEach( function( day ) {
+    if (!firstDayBtn) {
+      firstDayBtn = makeDayButton(day);
+    } else {
+      makeDayButton(day); 
+    }
+  });
+
+  if (data.length > 0)
+    switchCurrentDay(data[0], firstDayBtn);
+})
+
 
 var switchCurrentDay = function(day, $dayBtn) {
   clearMap()
   currentDay = day
-  $dayTitle.text('Day ' + day.dayNum)
+  $dayTitle.text('Day ' + day.number)
   $('.day-btn').removeClass('current-day')
   $dayBtn.addClass('current-day')
 
@@ -18,38 +32,61 @@ var switchCurrentDay = function(day, $dayBtn) {
   $("#itinerary").html(templates.get('itinerary'))
 
   // loop through the model, and call `addItemToList` once for each activity
-  addItemToList('hotel', currentDay.hotel)
+  $.get('/days/' + currentDay._id, function (day) {
+    addItemToList('hotel', day.hotel.name);
 
-  currentDay.restaurants.forEach(function(r) {
-    addItemToList('restaurants', r)
-  })
+    day.restaurants.forEach(function(item) {
+      addItemToList('restaurants', item.name);
+    });
 
-  currentDay.thingsToDo.forEach(function(t) {
-    addItemToList('thingsToDo', t)
-  })
+    day.thingsToDo.forEach(function(item) {
+      addItemToList('thingsToDo', item.name);
+    });
+  });
 }
 
 $addDay.on('click', function() {
-  //"model-y"
-  var newDay = {
-    restaurants: [],
-    thingsToDo: [],
-    hotel: null,
-    dayNum: days.length + 1
-  }
 
-  days.push(newDay)
+  $.post('/days', function (day) {
+    var newDayBtn = makeDayButton(day);
 
+    switchCurrentDay(day, newDayBtn);
+  })
 
-  var newDayBtn = templates.get('day-btn')
-    .text(newDay.dayNum)
-    .insertBefore($addDay)
-    .on('click', function() {
-      switchCurrentDay(newDay, $(this))
-    })
-
-  switchCurrentDay(newDay, newDayBtn)
 })
+
+$removeDay.on('click', function() {
+
+  $.ajax({
+      url: '/days/' + currentDay._id,
+      type: 'DELETE',
+      success: function(dayObj) {
+        // Do something with the result
+        currentDay = dayObj.newCurrentDay;
+        $("div.day-buttons #" + dayObj.removedDay._id).remove();
+
+        // console.log(newAndDeletedDay.newDay, newAndDeletedDay.deletedDay);
+        dayObj.allDays.forEach( function (day) {
+
+          $("div.day-buttons .a-day#" + day._id).text(day.number);
+  
+        });
+        
+        switchCurrentDay(currentDay, $( "button:contains(" + currentDay.number + ")" ));          
+      }
+  });
+
+});
+
+function makeDayButton(day) {
+  return templates.get('day-btn')
+        .attr('id', day._id)
+        .text(day.number)
+        .insertBefore($addDay)
+        .on('click', function() {
+          switchCurrentDay(day, $(this))
+        });
+}
 
 
 

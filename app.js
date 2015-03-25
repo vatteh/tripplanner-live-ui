@@ -1,11 +1,13 @@
 var express = require('express'),
 	logger = require('morgan'),
 	swig = require('swig'),
-	sassMiddleware = require('node-sass-middleware');
-    
-var days = require('./routes/days');
-var app = express();
+	sassMiddleware = require('node-sass-middleware'),
+    bodyParser = require('body-parser');
 
+    
+var app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 // set up rendering with swig
 app.set('views', __dirname + '/views');
 app.set('view engine', 'html');
@@ -27,8 +29,8 @@ app.use('/bower_components', express.static(__dirname + '/bower_components'));
 app.use(express.static(__dirname + '/public'));
 
 // serve root
-app.get('/', require('./routes'));
-app.use('/days', days);
+app.use('/', require('./routes/index.js'));
+app.use('/days', require('./routes/days.js'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -49,5 +51,5 @@ app.use(function(err, req, res, next) {
 // listen on a port
 var port = 3000;
 app.listen(port, function () {
-	console.log('The server is listening closely on port', port);
+	console.log('Trip Planner is live! The server is listening closely on port', port);
 });

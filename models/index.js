@@ -32,7 +32,7 @@ var restaurantSchema = new mongoose.Schema({
 
 var daySchema = new mongoose.Schema({
 	number: String,
-	hotels: {type: mongoose.Schema.Types.ObjectId, ref: 'Hotel'},
+	hotel: {type: mongoose.Schema.Types.ObjectId, ref: 'Hotel'},
 	restaurants: [{type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant'}],
 	thingsToDo: [{type: mongoose.Schema.Types.ObjectId, ref: 'ThingToDo'}],
 });

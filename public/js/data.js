@@ -4,7 +4,6 @@ var data = {
 	thingsToDo: {}
 }
 
-
 all_hotels.forEach(function(hotel) {
 	data.hotels[hotel._id] = hotel
 })
