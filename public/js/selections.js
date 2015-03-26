@@ -24,18 +24,20 @@ var getListByType = function(type) {
 	}[type]
 }
 
-var addItemToList = function(type, activity) {
+var addItemToList = function(type, activity, id, location) {
+
 	if(!activity) return;
-	var list = getListByType(type)
+	var list = getListByType(type);
 
 	var template = templates.get('itinerary-item')
-	  .appendTo(list)
-
+	  .attr('data-value', id)
+	  .attr('data-type', type)
+	  .appendTo(list);
 
 	template.find('.title')
-	 .text(activity)
+	 .text(activity);
 
-	// drawLocation(activity.place[0].location, iconTypeMap[type])
+	drawLocation(location, iconTypeMap[type], id);
 }
 
 $('.add-activity').on('click', function() {
@@ -46,25 +48,36 @@ $('.add-activity').on('click', function() {
 	var type = $(this).attr('data-type');
 	var id = $select.val();
 	var activity = $select.find('option:selected').text();
-	$.post('/days/'+ currentDay._id + '/' + type, {value: id}, function() {
-		//views
-		addItemToList(type, activity);
-	}, "json");
-
-	// $.ajax({
-	//   type: "POST",
-	//   url: '/days/'+ currentDay._id + '/hotel',
-	//   data: {value: id},
-	//   success: function() {
-	// 	var activity = getActivity(type, id);
-	// 	//views
-	// 	addItemToList('hotel', activity);
-	// },
-	//   dataType: 'json'
-	// });
+	$.post('/days/'+ currentDay._id + '/' + type, {value: id}, function(location) {
+		if(type === "hotel")
+			$("ul.hotel-list div").remove();
+		addItemToList(type, activity, id, location);
+	});
 
 })
 
-$('#itinerary').on('click', '.remove', function() {
+$('#itinerary').on('click', '.remove button', function() {
 
+	var activityId = $(this).parent().parent().attr('data-value');
+	var type = $(this).parent().parent().attr('data-type');
+	var nodeToRemove = $(this).parent().parent();
+	
+	var url;
+	if (type === "hotel") {
+		url = '/days/' + currentDay._id + "/hotel";
+	} else if (type === "restaurants") {
+		url = '/days/' + currentDay._id + "/restaurant/" + activityId;
+	} else if (type === "thingsToDo") {
+		url = '/days/' + currentDay._id + "/thingsToDo/" + activityId;
+	}
+
+
+	$.ajax({
+	    url: url,
+	    type: 'DELETE',
+	    success: function() {
+	    	nodeToRemove.remove();
+			clearLocation(activityId);
+		}
+	});
 })

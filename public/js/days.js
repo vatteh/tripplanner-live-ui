@@ -33,14 +33,16 @@ var switchCurrentDay = function(day, $dayBtn) {
 
   // loop through the model, and call `addItemToList` once for each activity
   $.get('/days/' + currentDay._id, function (day) {
-    addItemToList('hotel', day.hotel.name);
+
+    if(day.hotel)
+      addItemToList('hotel', day.hotel.name, day.hotel._id, day.hotel.place[0].location);
 
     day.restaurants.forEach(function(item) {
-      addItemToList('restaurants', item.name);
+      addItemToList('restaurants', item.name, item._id, item.place[0].location);
     });
 
     day.thingsToDo.forEach(function(item) {
-      addItemToList('thingsToDo', item.name);
+      addItemToList('thingsToDo', item.name, item._id, item.place[0].location);
     });
   });
 }
@@ -65,11 +67,8 @@ $removeDay.on('click', function() {
         currentDay = dayObj.newCurrentDay;
         $("div.day-buttons #" + dayObj.removedDay._id).remove();
 
-        // console.log(newAndDeletedDay.newDay, newAndDeletedDay.deletedDay);
         dayObj.allDays.forEach( function (day) {
-
           $("div.day-buttons .a-day#" + day._id).text(day.number);
-  
         });
         
         switchCurrentDay(currentDay, $( "button:contains(" + currentDay.number + ")" ));          

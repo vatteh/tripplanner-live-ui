@@ -5,7 +5,7 @@ var models = require('../models');
 // GET /days
 dayRouter.get('/', function (req, res, next) {
     // serves up all days as json
-    models.Day.find({}, function (err, days) {
+    models.Day.find({}, null, {sort: {'number': 1}} ,function (err, days) {
         res.send(days);
     });    
 });
@@ -35,8 +35,6 @@ dayRouter.get('/:id', function (req, res, next) {
         .findOne({_id: req.params.id})
         .populate('hotel restaurants thingsToDo')
         .exec(function(err, popDay) {
-             // popDay now has objects in place of _id s!
-             console.log(popDay);
              res.send(popDay);
         });
 });
@@ -45,7 +43,7 @@ dayRouter.get('/:id', function (req, res, next) {
 dayRouter.delete('/:id', function (req, res, next) {
     // deletes a particular day
     models.Day.findOneAndRemove({ _id: req.params.id }, function(err, removedDay) {
-        models.Day.find({}, function (err, allDays) {
+        models.Day.find({}, null, {sort: {'number': 1}}, function (err, allDays) {
             var newCurrentDay;
             allDays.forEach(function(day) {
                 if (parseInt(day.number) > parseInt(removedDay.number)) {
@@ -82,12 +80,13 @@ attractionRouter.post('/hotel', function (req, res, next) {
     // creates a reference to the hotel
 
     models.Day.findOne({_id: req.params.id}, function (err, day) {
-
         day.hotel = req.body.value;
-        day.save( function(err, day) {
-          res.send(day);
-        }); 
 
+        models.Hotel.findOne({_id: day.hotel}, function (err, hotel) {
+            day.save( function(err, day) {
+                res.send(hotel.place[0].location);
+            }); 
+        });
     });
 });
 // DELETE /days/:id/hotel
@@ -111,18 +110,20 @@ attractionRouter.post('/restaurants', function (req, res, next) {
     models.Day.findOne({_id: req.params.id}, function (err, day) {
 
         day.restaurants.push( req.body.value );
-        day.save( function(err, day) {
-          res.send(day);
-        }); 
+        models.Restaurant.findOne({_id: day.restaurants[day.restaurants.length-1]}, function (err, restaurant) {
+            day.save( function(err, day) {
+                res.send(restaurant.place[0].location);
+            }); 
+        });
     });
 });
 // DELETE /days/:dayId/restaurants/:restId
-attractionRouter.delete('/restaurant/:id', function (req, res, next) {
+attractionRouter.delete('/restaurant/:activityId', function (req, res, next) {
     // deletes a reference to a restaurant
 
     models.Day.findOne({_id: req.params.id}, function (err, day) {
 
-        var index = day.restaurants.indexOf( req.body.value );
+        var index = day.restaurants.indexOf( req.params.activityId );
         day.restaurants.splice(index, 1);
 
         day.save( function(err, day) {
@@ -137,18 +138,20 @@ attractionRouter.post('/thingsToDo', function (req, res, next) {
     models.Day.findOne({_id: req.params.id}, function (err, day) {
 
         day.thingsToDo.push( req.body.value );
-        day.save( function(err, day) {
-          res.send(day);
-        }); 
+        models.ThingToDo.findOne({_id: day.thingsToDo[day.thingsToDo.length-1]}, function (err, thingToDo) {
+            day.save( function(err, day) {
+                res.send(thingToDo.place[0].location);
+            }); 
+        });
     });
 });
 // DELETE /days/:dayId/thingsToDo/:thingId
-attractionRouter.delete('/thingsToDo/:id', function (req, res, next) {
+attractionRouter.delete('/thingsToDo/:activityId', function (req, res, next) {
     // deletes a reference to a thing to do
 
     models.Day.findOne({_id: req.params.id}, function (err, day) {
 
-        var index = day.thingsToDo.indexOf( req.body.value );
+        var index = day.thingsToDo.indexOf( req.params.activityId );
         day.thingsToDo.splice(index, 1);
 
         day.save( function(err, day) {
@@ -158,24 +161,3 @@ attractionRouter.delete('/thingsToDo/:id', function (req, res, next) {
 });
 
 module.exports = dayRouter;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -20,6 +20,15 @@ var clearMap = function() {
     })
 }
 
+var clearLocation = function(id) {
+    markers.forEach(function(marker, index) {
+        if (marker.id === id) {
+            marker.setMap(null);
+            markers.splice(index, 1);
+        }
+    })
+}
+
 function initialize_gmaps() {
     // initialize new google maps LatLng object
     var myLatlng = new google.maps.LatLng(40.705786,-74.007672);
@@ -42,12 +51,13 @@ $(document).ready(function() {
 });
 
 
-function drawLocation (location, opts) {
+function drawLocation (location, opts, id) {
     if (typeof opts !== 'object') {
         opts = {}
     }
     opts.position = new google.maps.LatLng(location[0], location[1]);
     opts.map = map;
+    opts.id = id;
     var marker = new google.maps.Marker(opts);
     markers.push(marker)
 }
