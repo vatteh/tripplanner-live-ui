@@ -1,4 +1,6 @@
-var map
+var map;
+var bound = new google.maps.LatLngBounds();
+
 
 var iconTypeMap = {
     hotel: {
@@ -12,7 +14,7 @@ var iconTypeMap = {
     }
 }
 
-var markers = []
+var markers = [];
 
 var clearMap = function() {
     markers.forEach(function(marker) {
@@ -58,8 +60,13 @@ function drawLocation (location, opts, id) {
     opts.position = new google.maps.LatLng(location[0], location[1]);
     opts.map = map;
     opts.id = id;
+    opts.animation = google.maps.Animation.DROP;
     var marker = new google.maps.Marker(opts);
-    markers.push(marker)
+    markers.push(marker);
+    bound.extend(marker.getPosition());
+    map.fitBounds(bound);
+    var zoom = map.getZoom();
+    map.setZoom(zoom > 16 ? 16 : zoom);
 }
 
 var styleArr = [

@@ -58,22 +58,27 @@ $addDay.on('click', function() {
 })
 
 $removeDay.on('click', function() {
+  var daysNum = $('.day-buttons').children().length;
+  if (daysNum > 2) {
+    $.ajax({
+        url: '/days/' + currentDay._id,
+        type: 'DELETE',
+        success: function(dayObj) {
+          console.log(dayObj);
+          // Do something with the result
+          currentDay = dayObj.newCurrentDay;
+          $("div.day-buttons #" + dayObj.removedDay._id).remove();
 
-  $.ajax({
-      url: '/days/' + currentDay._id,
-      type: 'DELETE',
-      success: function(dayObj) {
-        // Do something with the result
-        currentDay = dayObj.newCurrentDay;
-        $("div.day-buttons #" + dayObj.removedDay._id).remove();
-
-        dayObj.allDays.forEach( function (day) {
-          $("div.day-buttons .a-day#" + day._id).text(day.number);
-        });
-        
-        switchCurrentDay(currentDay, $( "button:contains(" + currentDay.number + ")" ));          
-      }
-  });
+          dayObj.allDays.forEach( function (day) {
+            $("div.day-buttons .a-day#" + day._id).text(day.number);
+          });
+          
+          switchCurrentDay(currentDay, $( "button:contains(" + currentDay.number + ")" ));          
+        }
+    });
+  } else {
+    return true;
+  }
 
 });
 

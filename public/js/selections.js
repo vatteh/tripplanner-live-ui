@@ -49,8 +49,12 @@ $('.add-activity').on('click', function() {
 	var id = $select.val();
 	var activity = $select.find('option:selected').text();
 	$.post('/days/'+ currentDay._id + '/' + type, {value: id}, function(location) {
-		if(type === "hotel")
-			$("ul.hotel-list div").remove();
+		if(type === "hotel") {
+			var node = $("ul.hotel-list div");
+			var nodeValue = node.attr("data-value");
+			node.remove();
+			clearLocation(nodeValue);
+		}
 		addItemToList(type, activity, id, location);
 	});
 
@@ -58,7 +62,7 @@ $('.add-activity').on('click', function() {
 
 $('#itinerary').on('click', '.remove button', function() {
 
-	var activityId = $(this).parent().parent().attr('data-value');
+	var id = $(this).parent().parent().attr('data-value');
 	var type = $(this).parent().parent().attr('data-type');
 	var nodeToRemove = $(this).parent().parent();
 	
@@ -66,9 +70,9 @@ $('#itinerary').on('click', '.remove button', function() {
 	if (type === "hotel") {
 		url = '/days/' + currentDay._id + "/hotel";
 	} else if (type === "restaurants") {
-		url = '/days/' + currentDay._id + "/restaurant/" + activityId;
+		url = '/days/' + currentDay._id + "/restaurant/" + id;
 	} else if (type === "thingsToDo") {
-		url = '/days/' + currentDay._id + "/thingsToDo/" + activityId;
+		url = '/days/' + currentDay._id + "/thingsToDo/" + id;
 	}
 
 
@@ -77,7 +81,7 @@ $('#itinerary').on('click', '.remove button', function() {
 	    type: 'DELETE',
 	    success: function() {
 	    	nodeToRemove.remove();
-			clearLocation(activityId);
+			clearLocation(id);
 		}
 	});
 })
